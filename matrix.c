@@ -57,18 +57,19 @@ list ** newListOfElements(){
 
 	FILE *f =NULL;
 		f = fopen("10001.txt", "r");
+		//f = fopen("web2.txt", "r");
 
 		if(f!=NULL){
 			int a;
 			int taille;
 			fscanf(f, "%d %d", &a, &taille);
-			printf("taille %d %d\n", taille, a);
+			//printf("taille %d %d\n", taille, a);
 			//printf("%d %d", a, taille);
 			list ** mat = malloc(taille * sizeof(list*)) ;
 			for(int i = 0; i < taille; i++) mat[i] = newList(); // on initialise chaque liste
 
 			for(int i = 0; i < taille; i++){
-				//printf("there");
+				//printf("%d \n", i);
 				double nb_colonne;
 				int k;
 				fscanf(f,"%d %lf", &k, &nb_colonne);
@@ -84,8 +85,8 @@ list ** newListOfElements(){
 
 
 				*/
-					//fscanf(f, "%d %lf", &colonne, &(valeur->d));// pour les cas web1, web2, web3
-					fscanf(f, "%lf %d", &(valeur->d), &colonne);// pour les cas 1000
+					fscanf(f, "%d %lf", &colonne, &(valeur->d));// pour les cas web1, web2, web3
+					//fscanf(f, "%lf %d", &(valeur->d), &colonne);// pour les cas 1000
 
 				/*
 				 * 			A CHANGER
@@ -98,7 +99,7 @@ list ** newListOfElements(){
 				 * ATTENTION
 				 *
 				 */
-					insertElem(mat[colonne ], valeur);
+					insertElem(mat[colonne - 1], valeur);
 
 				/**
 				 *
@@ -115,7 +116,7 @@ list ** newListOfElements(){
 			return mat;
 		}
 		else {
-			printf("nope");
+			//printf("nope");
 
 		}
 
@@ -184,6 +185,7 @@ double * calculF(list ** mat,int taille){
 
 double * convergenceFinale(list **mat, double * pi0, int taille){
 
+	//printf("Enter convergence \n");
 	double alpha = 0.85;
 	double g = (1 - alpha) * (1/(double)taille);
 	double d = alpha * (1/(double)taille);
@@ -198,40 +200,41 @@ double * convergenceFinale(list **mat, double * pi0, int taille){
 	}
 
 	int iteration = 0;
+	double res = 1;
+	double scal = 0;
 
-
-	while( conv(pin, pimem, taille) > 1e-6){ //cela revient à comparer pin+1 et pin
-
+	while(res >= 1e-6){ //cela revient à comparer pin+1 et pin
+		res = 0;
+		for (int i = 0; i < taille; i++)
+		{
+			scal = pi0[i] * f[i];
+		}
 		for(int i = 0; i < taille; i++){
-
-			pin[i] = (g + d*(multScal(pi0, f, taille)));
+			
+			pin[i] = (g + d * scal);
 
 			elem * tmp = mat[i]->head; // on prend le premier élément de la colonne i
 			matval jsp ;			   // c'est l'élément contenant la ligne et la valeur
-			int line;				   // ligne de l'élément
 
 			while (tmp != NULL){ //on parcourt la liste en entier
 				jsp= *(matval*)(tmp->val);
-				line = jsp.line;
 				tmp = tmp->next;
 				
-				pin[i] += alpha * (pi0[line] * jsp.d) ; //on additionne l'élément de la colonne de pi0 correspondant à l'élément de la ligne de la matrice
-			
+				pin[i] += alpha * (pi0[jsp.line] * jsp.d) ; //on additionne l'élément de la colonne de pi0 correspondant à l'élément de la ligne de la matrice
 			}			//axP                        +  [(1 − α)(1/N) + α(1/N)(x f t )]e
-			
 		}
-
 
 
 		for(int i =0; i < taille; i++){ //on recopie
 			pimem[i] = pi0[i];          // on met pi0 dans pimem qui est utilisé pour le test
 			pi0[i] = pin[i];            // on met pin dans pi0 qui est utilisé pour le calcul suivant
-
+			res += ABS(pin[i] - pimem[i]);
 		}
+		//printf("res = %lf\n", res);
 
 
 		iteration++;
-
+		//printf("iteration: %d\n", iteration);
 	}
 	printf("iteration: %d", iteration);
 	free(pimem);
@@ -248,7 +251,7 @@ double * convergenceFinale(list **mat, double * pi0, int taille){
  * ################												##########################
  */
 
-/*double * Gauss_Seidel(list ** mat, double * pi0, int taille){
+double * Gauss_Seidel(list ** mat, double * pi0, int taille){
 
 	double alpha = 0.85;
 	double g = (1 - alpha) * (1/(double)taille);
@@ -264,55 +267,60 @@ double * convergenceFinale(list **mat, double * pi0, int taille){
 	}
 
 	int iteration = 0;
+	double res = 1;
+	double div4norme = 0;
+	double scal = 0;
 
+	while( res > 1e-6){ //cela revient à comparer pin+1 et pin
 
-	while( conv(pin, pimem, taille) > 1e-6){ //cela revient à comparer pin+1 et pin
-
+		res = 0;
+		for (int i = 0; i < taille; i++)
+		{
+			scal = pi0[i] * f[i];
+		}
 		for(int i = 0; i < taille; i++){
 
-			pin[i] = (g + d*(multScal(pi0, f, taille)));
+			pin[i] = (g + d*scal);
 
 			elem * tmp = mat[i]->head; // on prend le premier élément de la colonne i
 			matval jsp ;			   // c'est l'élément contenant la ligne et la valeur
-			int line;				   // ligne de l'élément
 
 			while (tmp != NULL){ //on parcourt la liste en entier
 				jsp= *(matval*)(tmp->val);
-				line = jsp.line;
 				tmp = tmp->next;
-				if (line < i)
+				if (jsp.line < i)
 				{
-					pin[i] += alpha * (pin[line] * jsp.d);
+					pin[i] += alpha * (pin[jsp.line] * jsp.d);
 				}
 				else
 				{
-					pin[i] += alpha * (pi0[line] * jsp.d) ; //on additionne l'élément de la colonne de pi0 correspondant à l'élément de la ligne de la matrice
+					pin[i] += alpha * (pi0[jsp.line] * jsp.d) ; //on additionne l'élément de la colonne de pi0 correspondant à l'élément de la ligne de la matrice
 				}
 			}			//axP                        +  [(1 − α)(1/N) + α(1/N)(x f t )]e
+		}
+		for(int i = 0; i < taille; i++){
 
-			double n = norme(pin, taille);
-			for (int i = 0; i < taille; i++)
-			{
-				pin[i] = pin[i] / n;
-			}
-			
+			div4norme += ABS(pin[i]);
+		}
+		for (int i = 0; i < taille; i++)
+		{
+			pin[i] = pin[i] / div4norme;
 		}
 
+		div4norme = 0;
 
-
-		for(int i =0; i < taille; i++){ //on recopie
+		for(int i = 0; i < taille; i++){ //on recopie
 			pimem[i] = pi0[i];          // on met pi0 dans pimem qui est utilisé pour le test
 			pi0[i] = pin[i];            // on met pin dans pi0 qui est utilisé pour le calcul suivant
-
+			res += ABS(pin[i] - pimem[i]);
 		}
-
+		//printf("res = %lf\n", res);
 
 		iteration++;
-
 	}
-	printf("iteration: %d", iteration);
+	printf("iteration: %d\n", iteration);
 	free(pimem);
 	free(f);
 	return pin;
 
-}*/
+}
