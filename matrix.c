@@ -32,6 +32,19 @@ double  conv(double * v1, double *v2, int taille){
 
 }
 
+double norme(double * v1, int taille){
+
+	double res = 0;
+
+		for(int i = 0; i < taille; i++){
+
+			res += ABS(v1[i]);
+		}
+
+	return res;
+}
+
+
 /*	############												#############################
  * ################"											###########################
  *#################" 						MATRICES CREUSES	###########################
@@ -43,7 +56,7 @@ list ** newListOfElements(){
 
 
 	FILE *f =NULL;
-		f = fopen("/home/piere/Bureau/10001.txt", "r");
+		f = fopen("10001.txt", "r");
 
 		if(f!=NULL){
 			int a;
@@ -191,7 +204,7 @@ double * convergenceFinale(list **mat, double * pi0, int taille){
 
 		for(int i = 0; i < taille; i++){
 
-			pin[i] = (g + d*(multScal(pi0, f, taille)) );
+			pin[i] = (g + d*(multScal(pi0, f, taille)));
 
 			elem * tmp = mat[i]->head; // on prend le premier élément de la colonne i
 			matval jsp ;			   // c'est l'élément contenant la ligne et la valeur
@@ -201,9 +214,11 @@ double * convergenceFinale(list **mat, double * pi0, int taille){
 				jsp= *(matval*)(tmp->val);
 				line = jsp.line;
 				tmp = tmp->next;
+				
 				pin[i] += alpha * (pi0[line] * jsp.d) ; //on additionne l'élément de la colonne de pi0 correspondant à l'élément de la ligne de la matrice
+			
 			}			//axP                        +  [(1 − α)(1/N) + α(1/N)(x f t )]e
-
+			
 		}
 
 
@@ -224,3 +239,80 @@ double * convergenceFinale(list **mat, double * pi0, int taille){
 	return pin;
 }
 
+
+
+/*	############												#############################
+ * ################"											###########################
+ *#################" 				ETAPE 4						###########################
+ * #################				GAUSS-SEIDEL				############################
+ * ################												##########################
+ */
+
+/*double * Gauss_Seidel(list ** mat, double * pi0, int taille){
+
+	double alpha = 0.85;
+	double g = (1 - alpha) * (1/(double)taille);
+	double d = alpha * (1/(double)taille);
+
+	double * pin = calloc(taille ,sizeof(double)) ; //c 'est en fait pin+1
+	double * pimem = calloc(taille ,sizeof(double)) ; //valeur qui retient pin
+	double * f = calculF(mat, taille);
+	for(int i =0; i < taille; i++){ //on copie pi0 dans pimem
+
+		pimem[i] = pi0[i];
+
+	}
+
+	int iteration = 0;
+
+
+	while( conv(pin, pimem, taille) > 1e-6){ //cela revient à comparer pin+1 et pin
+
+		for(int i = 0; i < taille; i++){
+
+			pin[i] = (g + d*(multScal(pi0, f, taille)));
+
+			elem * tmp = mat[i]->head; // on prend le premier élément de la colonne i
+			matval jsp ;			   // c'est l'élément contenant la ligne et la valeur
+			int line;				   // ligne de l'élément
+
+			while (tmp != NULL){ //on parcourt la liste en entier
+				jsp= *(matval*)(tmp->val);
+				line = jsp.line;
+				tmp = tmp->next;
+				if (line < i)
+				{
+					pin[i] += alpha * (pin[line] * jsp.d);
+				}
+				else
+				{
+					pin[i] += alpha * (pi0[line] * jsp.d) ; //on additionne l'élément de la colonne de pi0 correspondant à l'élément de la ligne de la matrice
+				}
+			}			//axP                        +  [(1 − α)(1/N) + α(1/N)(x f t )]e
+
+			double n = norme(pin, taille);
+			for (int i = 0; i < taille; i++)
+			{
+				pin[i] = pin[i] / n;
+			}
+			
+		}
+
+
+
+		for(int i =0; i < taille; i++){ //on recopie
+			pimem[i] = pi0[i];          // on met pi0 dans pimem qui est utilisé pour le test
+			pi0[i] = pin[i];            // on met pin dans pi0 qui est utilisé pour le calcul suivant
+
+		}
+
+
+		iteration++;
+
+	}
+	printf("iteration: %d", iteration);
+	free(pimem);
+	free(f);
+	return pin;
+
+}*/

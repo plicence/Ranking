@@ -19,6 +19,7 @@ list ** test = newListOfElements();
 
 double *res =NULL;
 res = convergenceFinale(test, pi0, taille);
+//res = Gauss_Seidel(test, pi0, taille);
 for(int i = 0; i < taille; i++){
 
 	printf("%lf\n", res[i]);
