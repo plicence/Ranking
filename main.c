@@ -32,19 +32,22 @@ list ** test = newListOfElements();
 }*/
 
 
-double *res =NULL;
+double *res1 =NULL;
+double *res2 =NULL;
 
-//res = convergenceFinale(test, pi0, taille);
-res = Gauss_Seidel(test, pi0, taille);
+res1 = convergenceFinale(test, pi0, taille);
+res2 = Gauss_Seidel(test, pi0, taille);
 
-/*for(int i = 0; i < taille; i++){
+for(int i = 0; i < 10; i++){
 
-	printf("%lf\n", res[i]);
+	printf("res1[%d] = %lf\n",i, res1[i]);
+	printf("res2[%d] = %lf\n",i, res2[i]);
 
 
-}*/
+}
 
-free(res);
+free(res1);
+free(res2);
 free(pi0);
 
 
