@@ -272,14 +272,13 @@ double * Gauss_Seidel(list ** mat, double * pi0, int taille){
 			line = jsp.line;
 			tmp = tmp->next;
 			if(i == line) {
-				diagonale[i] = alpha * jsp.d + g;
+				diagonale[i] -= alpha * jsp.d + g;
 			}
 
 		}
 
 
 	}
-
 
 	int iteration = 0;
 	double res = 1;
@@ -334,7 +333,7 @@ double * Gauss_Seidel(list ** mat, double * pi0, int taille){
 
 		div4norme = 0;
 
-		//printf("res = %lf\n", res);
+		printf("res = %lf\n", res);
 
 		iteration++;
 	}
