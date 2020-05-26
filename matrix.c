@@ -263,23 +263,19 @@ double * Gauss_Seidel(list ** mat, double * pi0, int taille){
 	for(int i =0; i < taille; i++){ //on copie pi0 dans pimem
 
 		pimem[i] = pi0[i];
-
-	}
-	for(int i = 0 ; i < taille ; i++){
-
-			elem * tmp = mat[i]->head; // on prend le premier élément de la colonne i
-			matval jsp ;			   // c'est l'élément contenant la ligne et la valeur
-			int line;				   // ligne de l'élément
-
-			while (tmp != NULL){ //on parcourt la liste en entier
-				jsp= *(matval*)(tmp->val);
-				line = jsp.line;
-				tmp = tmp->next;
-				if(i == line) {
-					diagonale[i] = alpha * jsp.d + g;
-				}
-
+		elem * tmp = mat[i]->head; // on prend le premier élément de la colonne i
+		matval jsp ;			   // c'est l'élément contenant la ligne et la valeur
+		int line;				   // ligne de l'élément
+		diagonale[i] = 1;
+		while (tmp != NULL){ //on parcourt la liste en entier
+			jsp= *(matval*)(tmp->val);
+			line = jsp.line;
+			tmp = tmp->next;
+			if(i == line) {
+				diagonale[i] = alpha * jsp.d + g;
 			}
+
+		}
 
 
 	}
@@ -309,38 +305,41 @@ double * Gauss_Seidel(list ** mat, double * pi0, int taille){
 				tmp = tmp->next;
 				if (jsp.line < i)
 				{
-					pin[i] += alpha * (pin[jsp.line] * jsp.d);
+					pin[i] +=( alpha * (pin[jsp.line] * jsp.d));
 				}
 				else if (jsp.line > i)
 				{
-					pin[i] += alpha * (pi0[jsp.line] * jsp.d) ; //on additionne l'élément de la colonne de pi0 correspondant à l'élément de la ligne de la matrice
+					pin[i] += (alpha * (pi0[jsp.line] * jsp.d)) ; //on additionne l'élément de la colonne de pi0 correspondant à l'élément de la ligne de la matrice
 				}
 			}			//axP                        +  [(1 − α)(1/N) + α(1/N)(x f t )]e
-		}
-		for(int i =0; i <taille; i++){
-				pin[i] = pin[i]/(1-diagonale[i]);
-			}
-		for(int i = 0; i < taille; i++){
-
 			div4norme += ABS(pin[i]);
+			pin[i] = pin[i]/(diagonale[i]);
 		}
-		for (int i = 0; i < taille; i++)
-		{
-			pin[i] = pin[i] / div4norme;
-		}
+		/*for(int i =0; i <taille; i++){
+				pin[i] = pin[i]/(diagonale[i]);
+			}
+*/
+			printf("iteration: %d\n", iteration);
+			/*for(int i = 0; i < taille; i++){
+
+
+			}*/
+			for (int i = 0; i < taille; i++)
+			{
+				pin[i] = pin[i] / div4norme;
+				pimem[i] = pi0[i];          // on met pi0 dans pimem qui est utilisé pour le test
+				pi0[i] = pin[i];            // on met pin dans pi0 qui est utilisé pour le calcul suivant
+				res += ABS(pin[i] - pimem[i]);
+			}
 
 		div4norme = 0;
 
-		for(int i = 0; i < taille; i++){ //on recopie
-			pimem[i] = pi0[i];          // on met pi0 dans pimem qui est utilisé pour le test
-			pi0[i] = pin[i];            // on met pin dans pi0 qui est utilisé pour le calcul suivant
-			res += ABS(pin[i] - pimem[i]);
-		}
 		//printf("res = %lf\n", res);
 
 		iteration++;
 	}
 	printf("iteration: %d\n", iteration);
+	free(diagonale);
 	free(pimem);
 	free(f);
 	return pin;
