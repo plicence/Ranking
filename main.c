@@ -35,12 +35,12 @@ list ** test = newListOfElements();
 double *res1 =NULL;
 double *res2 =NULL;
 
-res1 = convergenceFinale(test, pi0, taille);
+//res1 = convergenceFinale(test, pi0, taille);
 res2 = Gauss_Seidel(test, pi0, taille);
 
 for(int i = 0; i < 10; i++){
 
-	printf("res1[%d] = %lf\n",i, res1[i]);
+	//printf("res1[%d] = %lf\n",i, res1[i]);
 	printf("res2[%d] = %lf\n",i, res2[i]);
 
 

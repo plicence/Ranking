@@ -256,7 +256,7 @@ double * Gauss_Seidel(list ** mat, double * pi0, int taille){
 	double alpha = 0.85;
 	double g = (1 - alpha) * (1/(double)taille);
 	double d = alpha * (1/(double)taille);
-
+	double * diagonale = calloc(taille ,sizeof(double)) ;
 	double * pin = calloc(taille ,sizeof(double)) ; //c 'est en fait pin+1
 	double * pimem = calloc(taille ,sizeof(double)) ; //valeur qui retient pin
 	double * f = calculF(mat, taille);
@@ -265,6 +265,25 @@ double * Gauss_Seidel(list ** mat, double * pi0, int taille){
 		pimem[i] = pi0[i];
 
 	}
+	for(int i = 0 ; i < taille ; i++){
+
+			elem * tmp = mat[i]->head; // on prend le premier élément de la colonne i
+			matval jsp ;			   // c'est l'élément contenant la ligne et la valeur
+			int line;				   // ligne de l'élément
+
+			while (tmp != NULL){ //on parcourt la liste en entier
+				jsp= *(matval*)(tmp->val);
+				line = jsp.line;
+				tmp = tmp->next;
+				if(i == line) {
+					diagonale[i] = alpha * jsp.d + g;
+				}
+
+			}
+
+
+	}
+
 
 	int iteration = 0;
 	double res = 1;
@@ -299,7 +318,7 @@ double * Gauss_Seidel(list ** mat, double * pi0, int taille){
 			}			//axP                        +  [(1 − α)(1/N) + α(1/N)(x f t )]e
 		}
 		for(int i =0; i <taille; i++){
-				pin[i] = pin[i]/(1-pi0[i]);
+				pin[i] = pin[i]/(1-diagonale[i]);
 			}
 		for(int i = 0; i < taille; i++){
 
