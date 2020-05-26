@@ -292,12 +292,15 @@ double * Gauss_Seidel(list ** mat, double * pi0, int taille){
 				{
 					pin[i] += alpha * (pin[jsp.line] * jsp.d);
 				}
-				else
+				else if (jsp.line > i)
 				{
 					pin[i] += alpha * (pi0[jsp.line] * jsp.d) ; //on additionne l'élément de la colonne de pi0 correspondant à l'élément de la ligne de la matrice
 				}
 			}			//axP                        +  [(1 − α)(1/N) + α(1/N)(x f t )]e
 		}
+		for(int i =0; i <taille; i++){
+				pin[i] = pin[i]/(1-pi0[i]);
+			}
 		for(int i = 0; i < taille; i++){
 
 			div4norme += ABS(pin[i]);
