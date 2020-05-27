@@ -271,6 +271,7 @@ double * Gauss_Seidel(list ** mat, double * pi0, int taille){
 	double res = 1;
 	double div4norme = 0;
 	double scal = 0;
+	double value = 0;
 
 	while( res > 1e-6){ //cela revient à comparer pin+1 et pin
 
@@ -281,23 +282,22 @@ double * Gauss_Seidel(list ** mat, double * pi0, int taille){
 		}
 		for(int i = 0; i < taille; i++){
 
-			pin[i] = (g + d*scal);
-
 			elem * tmp = mat[i]->head; // on prend le premier élément de la colonne i
 			matval jsp ;			   // c'est l'élément contenant la ligne et la valeur
-
+			value = 0;
 			while (tmp != NULL){ //on parcourt la liste en entier
 				jsp= *(matval*)(tmp->val);
 				tmp = tmp->next;
 				if (jsp.line < i)
 				{
-					pin[i] += alpha * (pin[jsp.line] * jsp.d);
+					value += alpha * (pin[jsp.line] * jsp.d);
 				}
 				else if (jsp.line >= i)
 				{
-					pin[i] += alpha * (pi0[jsp.line] * jsp.d) ; //on additionne l'élément de la colonne de pi0 correspondant à l'élément de la ligne de la matrice
+					value += alpha * (pi0[jsp.line] * jsp.d) ; //on additionne l'élément de la colonne de pi0 correspondant à l'élément de la ligne de la matrice
 				}
 			}			//axP                        +  [(1 − α)(1/N) + α(1/N)(x f t )]e
+			pin[i] = value + (g + d*scal);				
 			div4norme += ABS(pin[i]);
 		}
 
