@@ -56,7 +56,7 @@ list ** newListOfElements(){
 
 
 	FILE *f =NULL;
-		f = fopen("wb-edu.txt", "r");
+		f = fopen("wikipedia-20051105V2.txt", "r");
 		//f = fopen("wikipedia-20051105V2.txt", "r");
 		//f = fopen("web2.txt", "r");
 
@@ -254,10 +254,9 @@ double * convergenceFinale(list **mat, double * pi0, int taille){
 
 double * Gauss_Seidel(list ** mat, double * pi0, int taille){
 
-	double alpha = 0.99;
+	double alpha = 0.90;
 	double g = (1 - alpha) * (1/(double)taille);
 	double d = alpha * (1/(double)taille);
-	double * diagonale = calloc(taille ,sizeof(double)) ;
 	double * pin = calloc(taille ,sizeof(double)) ; //c 'est en fait pin+1
 	double * pimem = calloc(taille ,sizeof(double)) ; //valeur qui retient pin
 	double * f = calculF(mat, taille);
@@ -265,19 +264,6 @@ double * Gauss_Seidel(list ** mat, double * pi0, int taille){
 
 		pimem[i] = pi0[i];
 		
-			elem * tmp = mat[i]->head; // on prend le premier élément de la colonne i
-			matval jsp ;			   // c'est l'élément contenant la ligne et la valeur
-			int line;				   // ligne de l'élément
-
-			while (tmp != NULL){ //on parcourt la liste en entier
-				jsp= *(matval*)(tmp->val);
-				line = jsp.line;
-				tmp = tmp->next;
-				if(i == line) {
-					diagonale[i] = alpha * jsp.d + g;
-				}
-
-			}
 
 	}
 
@@ -307,12 +293,11 @@ double * Gauss_Seidel(list ** mat, double * pi0, int taille){
 				{
 					pin[i] += alpha * (pin[jsp.line] * jsp.d);
 				}
-				else if (jsp.line > i)
+				else if (jsp.line >= i)
 				{
 					pin[i] += alpha * (pi0[jsp.line] * jsp.d) ; //on additionne l'élément de la colonne de pi0 correspondant à l'élément de la ligne de la matrice
 				}
 			}			//axP                        +  [(1 − α)(1/N) + α(1/N)(x f t )]e
-			pin[i] = pin[i]/(1-diagonale[i]);
 			div4norme += ABS(pin[i]);
 		}
 
@@ -323,15 +308,14 @@ double * Gauss_Seidel(list ** mat, double * pi0, int taille){
 			res += ABS(pin[i] - pimem[i]);
 		}
 		div4norme = 0;
-		printf("iteration: %d\n", iteration);
-		printf("res = %lf\n", res);
+		//printf("iteration: %d\n", iteration);
+		//printf("res = %lf\n", res);
 
 		iteration++;
 	}
 	printf("iteration: %d\n", iteration);
 	free(pimem);
 	free(f);
-	free(diagonale);
 	return pin;
 
 }

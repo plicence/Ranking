@@ -7,9 +7,9 @@
 int main(){
 
 //int taille = 1634989;
-int taille = 9845725;
+int taille = 1634989;
 //int taille = 9;
-double *pi0= malloc(taille*sizeof(double));
+double *pi0= malloc(taille*sizeof( double));
 for(int i = 0; i < taille; i++){
 
 		pi0[i]=1/(double)taille;
