@@ -6,7 +6,8 @@
 
 int main(){
 
-int taille = 281903;
+//int taille = 1634989;
+int taille = 9845725;
 //int taille = 9;
 double *pi0= malloc(taille*sizeof(double));
 for(int i = 0; i < taille; i++){
@@ -31,21 +32,19 @@ list ** test = newListOfElements();
 	}
 }*/
 
-
 double *res1 =NULL;
 double *res2 =NULL;
 
 //res1 = convergenceFinale(test, pi0, taille);
 res2 = Gauss_Seidel(test, pi0, taille);
 
-for(int i = 0; i < 10; i++){
+for(int i = 0; i < 20; i++){
 
 	//printf("res1[%d] = %lf\n",i, res1[i]);
 	printf("res2[%d] = %lf\n",i, res2[i]);
 
 
 }
-
 free(res1);
 free(res2);
 free(pi0);
